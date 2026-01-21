@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IO Hunter: Identity Reveal v5.1</title>
+    <title>IO Hunter: Identity Reveal (By Mr. Winai)</title>
+    <meta name="author" content="Mr. Winai Phanarkat">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -31,7 +32,7 @@
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
 </head>
-<body class="cyber-bg text-slate-200 min-h-screen">
+<body class="cyber-bg text-slate-200 min-h-screen flex flex-col">
 
     <!-- Navbar -->
     <nav class="border-b border-slate-700/50 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
@@ -39,16 +40,16 @@
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-id-card-clip text-blue-500 animate-pulse"></i>
                 <h1 class="font-bold text-lg tracking-wide text-white">
-                    IO_HUNTER <span class="text-[10px] bg-blue-900 text-blue-200 px-1 rounded">v5.1</span>
+                    IO_HUNTER <span class="text-[10px] bg-blue-900 text-blue-200 px-1 rounded">v5.2</span>
                 </h1>
             </div>
             <div class="text-[10px] font-mono text-slate-400 hidden sm:block">
-                MODULE: <span class="text-blue-400">IDENTITY_REVEAL</span>
+                DEV: <span class="text-blue-400">MR. WINAI PHANARKAT</span>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto px-4 py-10">
+    <main class="max-w-5xl mx-auto px-4 py-10 flex-grow">
 
         <!-- STEP 1: INPUT -->
         <section id="input-section" class="transition-all duration-500">
@@ -110,7 +111,7 @@
                                 </div>
                             </div>
 
-                            <!-- NEW: Identity Name Display -->
+                            <!-- Identity Name Display -->
                             <div class="mb-4 w-full">
                                 <h2 id="target-name" class="text-xl font-bold text-white truncate px-2 drop-shadow-md">Loading...</h2>
                                 <p class="text-[10px] text-slate-500 font-mono tracking-widest uppercase mt-1">TARGET IDENTITY</p>
@@ -221,6 +222,21 @@
         </div>
 
     </main>
+
+    <!-- FOOTER WITH CREDIT -->
+    <footer class="mt-auto py-6 border-t border-slate-800 bg-slate-900/50 backdrop-blur">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="text-xs text-slate-500 font-mono flex items-center justify-center gap-2">
+                <i class="fa-solid fa-code text-blue-500"></i> SYSTEM ARCHITECT: 
+                <a href="https://www.facebook.com/winayo1" target="_blank" class="text-blue-400 hover:text-white hover:underline transition-all font-bold tracking-wide">
+                    Mr. Winai Phanarkat
+                </a>
+            </p>
+            <p class="text-[10px] text-slate-600 mt-1 uppercase tracking-widest">
+                IO Hunter Protocol © 2024 - All Rights Reserved
+            </p>
+        </div>
+    </footer>
 
     <script>
         // --- VARIABLES ---
