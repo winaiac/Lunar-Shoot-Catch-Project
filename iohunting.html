@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IO Hunter: Precision Logic v5.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cyber-bg {
+            background-color: #0f172a;
+            background-image: linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+    </style>
+</head>
+
+<body class="cyber-bg text-slate-200 min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="border-b border-slate-700/50 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-layer-group text-blue-500"></i>
+                <h1 class="font-bold text-lg tracking-wide text-white">
+                    IO_PRECISION <span class="text-[10px] bg-blue-900 text-blue-200 px-1 rounded">v5.0</span>
+                </h1>
+            </div>
+            <div class="text-[10px] font-mono text-slate-400">
+                LOGIC: <span class="text-blue-400">3-TIER ANALYSIS</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 py-10">
+
+        <!-- STEP 1: INPUT -->
+        <section id="input-section" class="transition-all duration-500">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-white mb-2">วิเคราะห์ความเสี่ยงบัญชี</h2>
+                <p class="text-slate-400 text-sm max-w-lg mx-auto">
+                    ระบบแยกแยะระหว่าง <span class="text-yellow-400">"การปิดกั้นทางเทคนิค"</span> (Technical Block)
+                    กับ <span class="text-red-400">"เจตนาปิดบังตัวตน"</span> (Privacy Locked) อย่างชัดเจน
+                </p>
+            </div>
+
+            <div class="glass-card max-w-xl mx-auto p-2 rounded-xl flex gap-2">
+                <input type="text" id="target-url" placeholder="Paste URL here..."
+                    class="flex-1 bg-slate-900/50 border border-slate-700 rounded-lg px-4 text-white focus:ring-2 focus:ring-blue-500 outline-none font-mono text-sm">
+                <button onclick="startAnalysis()"
+                    class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-microchip"></i> SCAN
+                </button>
+            </div>
+        </section>
+
+        <!-- STEP 2: LOGS -->
+        <section id="logs-section" class="hidden max-w-2xl mx-auto my-8">
+            <div class="bg-black/90 rounded-lg p-4 font-mono text-xs h-40 overflow-y-auto border-l-2 border-blue-500"
+                id="terminal">
+                <!-- Logs injected here -->
+            </div>
+        </section>
+
+        <!-- STEP 3: RESULT DASHBOARD -->
+        <section id="result-section" class="hidden opacity-0 transition-opacity duration-700">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+
+                <!-- Left: Technical Status -->
+                <div class="md:col-span-5">
+                    <div
+                        class="glass-card p-6 rounded-xl h-full flex flex-col items-center text-center relative overflow-hidden">
+
+                        <!-- Status Indicator Bar -->
+                        <div id="status-bar" class="absolute top-0 left-0 w-full h-1 bg-gray-600"></div>
+
+                        <h3 class="text-slate-400 text-xs font-mono uppercase tracking-widest mb-6">Technical Signal
+                        </h3>
+
+                        <!-- Image Display -->
+                        <div class="relative w-32 h-32 mb-4 group">
+                            <img id="profile-img" src=""
+                                class="w-full h-full rounded-full object-cover border-4 border-slate-700 hidden">
+
+                            <!-- Icons for different states -->
+                            <div id="icon-platform-block"
+                                class="hidden w-full h-full rounded-full bg-slate-800 flex items-center justify-center border-4 border-yellow-600/50">
+                                <i class="fa-brands fa-facebook-f text-4xl text-yellow-500"></i>
+                                <div
+                                    class="absolute bottom-0 right-0 bg-yellow-600 text-black text-[10px] font-bold px-2 rounded-full">
+                                    BLOCKED</div>
+                            </div>
+
+                            <div id="icon-privacy-lock"
+                                class="hidden w-full h-full rounded-full bg-slate-800 flex items-center justify-center border-4 border-red-600/50">
+                                <i class="fa-solid fa-user-slash text-4xl text-red-500"></i>
+                                <div
+                                    class="absolute bottom-0 right-0 bg-red-600 text-white text-[10px] font-bold px-2 rounded-full">
+                                    HIDDEN</div>
+                            </div>
+
+                            <div id="icon-visible"
+                                class="hidden absolute bottom-0 right-0 bg-green-500 text-black text-[10px] font-bold px-2 rounded-full border border-white">
+                                OPEN
+                            </div>
+                        </div>
+
+                        <!-- Technical Diagnosis -->
+                        <div class="w-full bg-slate-800/50 p-3 rounded-lg text-left space-y-2 mb-4">
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-400">API Signal:</span>
+                                <span id="api-status" class="font-mono font-bold">...</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-400">Image Load:</span>
+                                <span id="img-load-status" class="font-mono font-bold">...</span>
+                            </div>
+                            <div class="h-px bg-slate-700 my-2"></div>
+                            <p id="diagnosis-text" class="text-xs leading-relaxed text-slate-300">
+                                Waiting for diagnosis...
+                            </p>
+                        </div>
+
+                        <!-- External Verify Link -->
+                        <a id="ext-link" href="#" target="_blank"
+                            class="text-xs text-blue-400 hover:text-blue-300 underline hidden">
+                            <i class="fa-solid fa-external-link-alt"></i> เปิดดูโปรไฟล์จริงเพื่อยืนยัน
+                        </a>
+
+                        <!-- Manual Upload Fallback (Only shows if needed) -->
+                        <div id="manual-upload" class="hidden w-full mt-2">
+                            <label
+                                class="block w-full text-center py-2 bg-slate-700 hover:bg-slate-600 rounded cursor-pointer text-xs transition">
+                                <i class="fa-solid fa-camera"></i> อัปโหลดภาพหน้าจอ
+                                <input type="file" class="hidden" accept="image/*" onchange="manualUpload(this)">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Analysis Form -->
+                <div class="md:col-span-7">
+                    <div class="glass-card p-6 rounded-xl h-full flex flex-col">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-white">ประเมินพฤติกรรม</h3>
+                                <p class="text-xs text-slate-400">คะแนนเริ่มต้น (Base Score)
+                                    ถูกกำหนดโดยสถานะทางเทคนิคด้านซ้าย</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-slate-500">BASE RISK</div>
+                                <div id="base-score-display" class="text-2xl font-bold font-mono text-slate-300">0%
+                                </div>
+                            </div>
+                        </div>
+
+                        <form id="verify-form" class="space-y-4 flex-1">
+                            <!-- Q1 Dynamic based on Tech Status -->
+                            <div id="q1-container">
+                                <label class="text-xs text-blue-400 font-mono block mb-1">1. สิ่งที่ตาคุณเห็น (Human
+                                    Verification)</label>
+                                <select id="q1"
+                                    class="w-full bg-slate-900 border border-slate-700 text-slate-300 text-sm rounded p-3 outline-none focus:border-blue-500">
+                                    <option value="0">✅ เห็นรูปคนชัดเจน / เป็นธรรมชาติ</option>
+                                    <option value="20">🌄 เห็นรูปวิว / การ์ตูน / สัตว์</option>
+                                    <option value="30">⛔️ ไม่เห็นรูป / รูปว่างเปล่า</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="text-xs text-blue-400 font-mono block mb-1">2.
+                                    พฤติกรรมหน้าไทม์ไลน์</label>
+                                <select id="q2"
+                                    class="w-full bg-slate-900 border border-slate-700 text-slate-300 text-sm rounded p-3 outline-none focus:border-blue-500">
+                                    <option value="0">🍵 ปกติ (ผสมผสาน)</option>
+                                    <option value="30">📢 การเมืองล้วน / ด่าทอ</option>
+                                    <option value="40">🔒 ล็อคโปรไฟล์ (Private)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="text-xs text-blue-400 font-mono block mb-1">3. ปฏิสัมพันธ์
+                                    (Interaction)</label>
+                                <select id="q3"
+                                    class="w-full bg-slate-900 border border-slate-700 text-slate-300 text-sm rounded p-3 outline-none focus:border-blue-500">
+                                    <option value="0">🗣 คุยกับคนอื่นปกติ</option>
+                                    <option value="30">🤖 ก้าวร้าว / Spam ข้อความเดิม</option>
+                                    <option value="30">👻 เงียบกริบ / ไม่มีเพื่อน</option>
+                                </select>
+                            </div>
+                        </form>
+
+                        <button onclick="calculateFinal()"
+                            class="mt-6 w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 rounded-lg shadow-lg">
+                            ประมวลผลความเสี่ยงรวม
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESULT MODAL -->
+        <div id="verdict-modal"
+            class="fixed inset-0 bg-black/90 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+            <div class="glass-card p-8 rounded-2xl max-w-sm w-full text-center border-t-4" id="modal-border">
+                <div class="relative w-40 h-40 mx-auto mb-4">
+                    <canvas id="chart"></canvas>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="final-score" class="text-4xl font-bold text-white">0%</span>
+                        <span class="text-[10px] text-slate-400">PROBABILITY</span>
+                    </div>
+                </div>
+                <h2 id="final-title" class="text-2xl font-bold mb-2 text-white">Analyzing...</h2>
+                <p id="final-desc" class="text-xs text-slate-400 mb-6 leading-relaxed">...</p>
+                <button onclick="location.reload()"
+                    class="border border-slate-600 text-slate-400 hover:text-white px-6 py-2 rounded text-xs font-mono transition">
+                    NEW SCAN
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- LOGIC VARIABLES ---
+        let baseRisk = 0;
+        let technicalState = "UNKNOWN"; // VISIBLE, PLATFORM_BLOCK, PRIVACY_LOCK
+
+        // --- 1. ANALYSIS ENGINE ---
+        async function startAnalysis() {
+            const url = document.getElementById('target-url').value;
+            if (!url) return;
+
+            // UI Reset
+            document.getElementById('input-section').classList.add('hidden');
+            document.getElementById('logs-section').classList.remove('hidden');
+            const logs = document.getElementById('terminal');
+            logs.innerHTML = '';
+
+            const log = (msg, color = 'text-slate-400') => {
+                logs.innerHTML += `<div class="${color} mb-1">> ${msg}</div>`;
+                logs.scrollTop = logs.scrollHeight;
+            };
+
+            await log("Initializing connection...", "text-blue-400");
+            await new Promise(r => setTimeout(r, 500));
+
+            // FETCH METADATA
+            let metaImage = null;
+            let metaTitle = "";
+
+            try {
+                await log(`Probing URL: ${url.substring(0, 25)}...`);
+                const res = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    metaImage = data.data.image ? data.data.image.url : null;
+                    metaTitle = data.data.title || "";
+                    await log("Metadata handshake: SUCCESS", "text-green-400");
+                } else {
+                    throw new Error("API Fail");
+                }
+            } catch (e) {
+                await log("Metadata handshake: FAILED / TIMEOUT", "text-red-400");
+            }
+
+            // DECISION LOGIC (The Core Logic)
+            if (metaImage) {
+                // Scenario: API found an image URL.
+                // Test: Can we load it?
+                await log("Image URL detected. Testing render capability...");
+
+                const img = new Image();
+                img.src = metaImage;
+
+                img.onload = () => {
+                    // TIER 1: VISIBLE
+                    technicalState = "VISIBLE";
+                    baseRisk = 0;
+                    updateUI(metaImage);
+                };
+
+                img.onerror = () => {
+                    // TIER 2: PLATFORM BLOCKED (User Public, FB Blocked)
+                    // This is the critical distinction user asked for
+                    technicalState = "PLATFORM_BLOCK";
+                    baseRisk = 15; // Low risk, technical issue
+                    updateUI(null);
+                };
+            } else {
+                // TIER 3: PRIVACY LOCKED (No image in metadata)
+                technicalState = "PRIVACY_LOCK";
+                baseRisk = 50; // High risk, user hidden
+                updateUI(null);
+            }
+        }
+
+        // --- 2. UI UPDATER ---
+        function updateUI(imgSrc) {
+            const resSec = document.getElementById('result-section');
+            document.getElementById('logs-section').classList.add('hidden');
+            resSec.classList.remove('hidden');
+            setTimeout(() => resSec.classList.remove('opacity-0'), 50);
+
+            // Elements
+            const diagText = document.getElementById('diagnosis-text');
+            const apiStat = document.getElementById('api-status');
+            const imgStat = document.getElementById('img-load-status');
+            const bar = document.getElementById('status-bar');
+            const extLink = document.getElementById('ext-link');
+            const manualUp = document.getElementById('manual-upload');
+
+            // Set External Link for manual verification
+            extLink.href = document.getElementById('target-url').value;
+            extLink.classList.remove('hidden');
+
+            if (technicalState === "VISIBLE") {
+                // TIER 1
+                document.getElementById('profile-img').src = imgSrc;
+                document.getElementById('profile-img').classList.remove('hidden');
+                document.getElementById('icon-visible').classList.remove('hidden');
+
+                apiStat.innerHTML = "<span class='text-green-400'>FOUND</span>";
+                imgStat.innerHTML = "<span class='text-green-400'>SUCCESS</span>";
+                diagText.innerHTML = "บัญชีเปิดเผยข้อมูลสาธารณะ (Public) และอนุญาตให้เข้าถึงรูปภาพได้ <span class='text-green-400'>ความเสี่ยงทางเทคนิคต่ำ</span>";
+                bar.className = "absolute top-0 left-0 w-full h-1 bg-green-500";
+
+                // Form Default
+                document.getElementById('q1').value = "0";
+
+            } else if (technicalState === "PLATFORM_BLOCK") {
+                // TIER 2 (Specific Request)
+                document.getElementById('icon-platform-block').classList.remove('hidden');
+                manualUp.classList.remove('hidden'); // Need manual proof
+
+                apiStat.innerHTML = "<span class='text-green-400'>FOUND</span>";
+                imgStat.innerHTML = "<span class='text-yellow-500'>BLOCKED (CORS)</span>";
+                diagText.innerHTML = "ระบบเจอข้อมูลรูป (User Public) แต่ Facebook/X ป้องกันการแสดงผลบนเว็บอื่น <span class='text-yellow-400'>ไม่ใช่ความผิดผู้ใช้</span> กรุณากดลิงก์เพื่อดูรูปจริงแล้วประเมิน";
+                bar.className = "absolute top-0 left-0 w-full h-1 bg-yellow-500";
+
+                // Form Default
+                document.getElementById('q1').value = "20"; // Unknown visual
+
+            } else {
+                // TIER 3
+                document.getElementById('icon-privacy-lock').classList.remove('hidden');
+                manualUp.classList.remove('hidden');
+
+                apiStat.innerHTML = "<span class='text-red-400'>NOT FOUND</span>";
+                imgStat.innerHTML = "<span class='text-slate-600'>N/A</span>";
+                diagText.innerHTML = "ไม่พบข้อมูลรูปภาพใน Metadata คาดว่าผู้ใช้ตั้งค่า <span class='text-red-400'>Private/Locked Profile</span> เจตนาปกปิดข้อมูล";
+                bar.className = "absolute top-0 left-0 w-full h-1 bg-red-600";
+
+                // Form Default
+                document.getElementById('q1').value = "30"; // Suspicious
+            }
+
+            // Update Base Score Display
+            const scoreDisp = document.getElementById('base-score-display');
+            scoreDisp.innerText = baseRisk + "%";
+            if (baseRisk === 0) scoreDisp.className = "text-2xl font-bold font-mono text-green-400";
+            else if (baseRisk === 15) scoreDisp.className = "text-2xl font-bold font-mono text-yellow-400";
+            else scoreDisp.className = "text-2xl font-bold font-mono text-red-400";
+        }
+
+        // --- 3. MANUAL UPLOAD ---
+        function manualUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.getElementById('profile-img');
+                    img.src = e.target.result;
+                    img.classList.remove('hidden');
+
+                    // Hide icons
+                    document.getElementById('icon-platform-block').classList.add('hidden');
+                    document.getElementById('icon-privacy-lock').classList.add('hidden');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // --- 4. FINAL CALCULATION ---
+        function calculateFinal() {
+            let total = baseRisk;
+            total += parseInt(document.getElementById('q1').value);
+            total += parseInt(document.getElementById('q2').value);
+            total += parseInt(document.getElementById('q3').value);
+
+            // Cap at 99
+            let finalPercent = Math.min(total, 99);
+            showVerdict(finalPercent);
+        }
+
+        function showVerdict(score) {
+            const modal = document.getElementById('verdict-modal');
+            const border = document.getElementById('modal-border');
+            const title = document.getElementById('final-title');
+            const desc = document.getElementById('final-desc');
+            const num = document.getElementById('final-score');
+
+            modal.classList.remove('hidden');
+
+            let color, textTitle, textDesc, borderColor;
+
+            if (score >= 70) {
+                color = '#ef4444';
+                borderColor = 'border-red-600';
+                textTitle = "HIGH RISK (I/O)";
+                textDesc = "ความเสี่ยงสูง: ผลรวมของสถานะทางเทคนิคและพฤติกรรมบ่งชี้ว่าเป็นบัญชีปฏิบัติการ";
+            } else if (score >= 40) {
+                color = '#eab308';
+                borderColor = 'border-yellow-500';
+                textTitle = "SUSPICIOUS";
+                textDesc = "น่าสงสัย: มีความก้ำกึ่งระหว่างคนจริงที่ระวังตัวกับบัญชีจัดตั้ง";
+            } else {
+                color = '#22c55e';
+                borderColor = 'border-green-500';
+                textTitle = "LIKELY ORGANIC";
+                textDesc = "ความเสี่ยงต่ำ: ผู้ใช้ทั่วไป (Organic User)";
+            }
+
+            border.className = `glass-card p-8 rounded-2xl max-w-sm w-full text-center border-t-4 ${borderColor}`;
+            title.innerText = textTitle;
+            title.style.color = color;
+            desc.innerText = textDesc;
+            num.innerText = score + "%";
+            num.style.color = color;
+
+            new Chart(document.getElementById('chart'), {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [score, 100 - score],
+                        backgroundColor: [color, '#334155'],
+                        borderWidth: 0,
+                        cutout: '85%'
+                    }]
+                },
+                options: { responsive: true, events: [] }
+            });
+        }
+    </script>
+</body>
+
+</html>
