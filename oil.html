@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,234 +7,37 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Sarabun', sans-serif;
-            background-color: #cfd8dc;
-            padding: 20px;
-            padding-bottom: 50px;
-        }
-
-        .bill-container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            margin-bottom: 30px;
-        }
-
-        /* หัวบิล */
-        .bill-header {
-            background: #d32f2f;
-            color: white;
-            padding: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .bill-header h2 {
-            margin: 0;
-            font-size: 20px;
-            letter-spacing: 0.5px;
-        }
-
-        .bill-logo {
-            font-size: 30px;
-        }
-
-        .input-section {
-            padding: 20px;
-            background: #ffebee;
-            border-bottom: 2px dashed #bbb;
-        }
-
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .full-row {
-            width: 100%;
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #b71c1c;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #d32f2f;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-family: 'Sarabun';
-            font-size: 15px;
-        }
-
-        /* สถานะ API */
-        .api-status {
-            font-size: 11px;
-            color: #d32f2f;
-            margin-top: 5px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .loading-dot {
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0% {
-                opacity: 0;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0;
-            }
-        }
-
-        /* ผลลัพธ์ */
-        .result-section {
-            padding: 25px;
-            background: #fff;
-        }
-
-        .summary-card {
-            background: #263238;
-            color: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .summary-card::after {
-            content: "ESTIMATED TOTAL";
-            position: absolute;
-            top: 8px;
-            left: 10px;
-            font-size: 9px;
-            opacity: 0.4;
-        }
-
-        .total-cost {
-            font-size: 40px;
-            font-weight: bold;
-            color: #ffeb3b;
-            margin: 10px 0;
-        }
-
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
-            font-size: 15px;
-        }
-
-        .label {
-            color: #666;
-        }
-
-        .val {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        /* เครดิต CEO วินัย */
-        .ceo-credit {
-            max-width: 600px;
-            margin: auto;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .ceo-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid #c5a059;
-            object-fit: cover;
-            box-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
-        }
-
-        .ceo-info {
-            flex: 1;
-        }
-
-        .ceo-name {
-            font-weight: 700;
-            color: #1a1a1a;
-            font-size: 18px;
-            margin: 0;
-        }
-
-        .ceo-title {
-            font-size: 11px;
-            color: #c5a059;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin: 4px 0;
-        }
-
-        .social-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 12px;
-        }
-
-        .social-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 15px;
-            border-radius: 20px;
-            color: white;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .btn-line {
-            background-color: #06C755;
-        }
-
-        .btn-fb {
-            background-color: #1877F2;
-        }
-
-        .social-btn:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
-        }
+        body { font-family: 'Sarabun', sans-serif; background-color: #cfd8dc; padding: 20px; padding-bottom: 50px; }
+        .bill-container { max-width: 600px; margin: auto; background: white; border-radius: 8px; box-shadow: 0 0 25px rgba(0, 0, 0, 0.2); overflow: hidden; margin-bottom: 30px; }
+        .bill-header { background: #d32f2f; color: white; padding: 25px; display: flex; justify-content: space-between; align-items: center; }
+        .bill-header h2 { margin: 0; font-size: 20px; letter-spacing: 0.5px; }
+        .bill-logo { font-size: 30px; }
+        .input-section { padding: 20px; background: #ffebee; border-bottom: 2px dashed #bbb; }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .full-row { width: 100%; margin-bottom: 15px; }
+        label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #b71c1c; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #d32f2f; border-radius: 4px; box-sizing: border-box; font-family: 'Sarabun'; font-size: 15px; }
+        .api-status { font-size: 11px; color: #d32f2f; margin-top: 5px; display: flex; align-items: center; gap: 5px; }
+        .loading-dot { animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
+        .result-section { padding: 25px; background: #fff; }
+        .summary-card { background: #263238; color: #fff; padding: 25px; border-radius: 8px; text-align: center; margin-bottom: 20px; position: relative; }
+        .summary-card::after { content: "ESTIMATED TOTAL"; position: absolute; top: 8px; left: 10px; font-size: 9px; opacity: 0.4; }
+        .total-cost { font-size: 40px; font-weight: bold; color: #ffeb3b; margin: 10px 0; }
+        .detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; }
+        .label { color: #666; }
+        .val { font-weight: 600; color: #2c3e50; }
+        .ceo-credit { max-width: 600px; margin: auto; background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #ddd; display: flex; align-items: center; gap: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+        .ceo-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #c5a059; object-fit: cover; box-shadow: 0 0 10px rgba(197, 160, 89, 0.5); }
+        .ceo-info { flex: 1; }
+        .ceo-name { font-weight: 700; color: #1a1a1a; font-size: 18px; margin: 0; }
+        .ceo-title { font-size: 11px; color: #c5a059; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin: 4px 0; }
+        .social-buttons { display: flex; gap: 10px; margin-top: 12px; }
+        .social-btn { display: flex; align-items: center; gap: 8px; padding: 8px 15px; border-radius: 20px; color: white; text-decoration: none; font-size: 12px; font-weight: bold; transition: 0.3s; }
+        .btn-line { background-color: #06C755; }
+        .btn-fb { background-color: #1877F2; }
     </style>
 </head>
-
 <body>
 
     <div class="bill-container">
@@ -276,7 +78,7 @@
                     <label>ราคาน้ำมัน (บาท/ลิตร)</label>
                     <input type="number" id="fuelPrice" placeholder="0.00" oninput="calculate()">
                     <div id="syncStatus" class="api-status">
-                        <i class="fas fa-sync-alt loading-dot"></i> กำลังซิงค์ราคาวันนี้...
+                        <i class="fas fa-sync-alt loading-dot"></i> กำลังดึงราคาน้ำมันล่าสุด...
                     </div>
                 </div>
             </div>
@@ -292,7 +94,6 @@
                 <div>ค่าน้ำมันที่ต้องจ่ายประมาณ</div>
                 <div class="total-cost" id="resTotal">0.00 ฿</div>
             </div>
-
             <div class="detail-row">
                 <span class="label">ปริมาณน้ำมันที่ใช้</span>
                 <span class="val" id="resLiters">0.00 ลิตร</span>
@@ -305,8 +106,7 @@
     </div>
 
     <div class="ceo-credit">
-        <img src="https://lh3.googleusercontent.com/a/ACg8ocKG8dEEP_hVIByaEQ5xvE-lz5XFeMDf5YBtimAJRUfL9AJotEk=s288-c-no"
-            alt="วินัย ผันอากาศ CEO" class="ceo-avatar">
+        <img src="https://avatars.githubusercontent.com/u/166665042?v=4" alt="วินัย ผันอากาศ CEO" class="ceo-avatar">
         <div class="ceo-info">
             <p class="ceo-name">วินัย ผันอากาศ</p>
             <p class="ceo-title">CEO & FOUNDER, DIY SMART ENERGY</p>
@@ -322,7 +122,6 @@
     </div>
 
     <script>
-        // 1. จัดการเรื่องวันที่และหัวบิล
         function initApp() {
             const now = new Date();
             const thMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
@@ -330,7 +129,6 @@
             let monthIdx = now.getMonth();
             let yearTh = now.getFullYear() + 543;
 
-            // ถ้าเกินวันที่ 15 ของเดือน ให้ถือว่าเป็นบิลรอบถัดไป (ตามสไตล์ช่างวินัย)
             if (day > 15) {
                 monthIdx++;
                 if (monthIdx > 11) { monthIdx = 0; yearTh++; }
@@ -339,70 +137,32 @@
             document.getElementById('headerMonth').innerText = `คำนวณน้ำมัน เดือน${thMonths[monthIdx]} ${yearTh}`;
             document.getElementById('currentDate').innerText = `ข้อมูล ณ วันที่ ${day} ${thMonths[now.getMonth()]} ${now.getFullYear() + 543}`;
 
-            fetchFuelPrice(); // เรียก API ดึงราคาน้ำมัน
+            fetchFuelPrice();
         }
 
-        // ระบบดึงราคาน้ำมันแบบ Direct Connect (ไม่ต้องใช้ Proxy ตัวกลาง)
         async function fetchFuelPrice() {
             const statusEl = document.getElementById('syncStatus');
-
-            // เราจะลองดึงจาก API ที่รองรับ CORS ในตัว (เป็นมิตรกับ GitHub Pages)
             const apiUrl = "https://raw.githubusercontent.com/jill6666/thai-oil-price/main/today.json";
-
-            statusEl.innerHTML = `<i class="fas fa-sync-alt loading-dot"></i> กำลังเชื่อมต่อฐานข้อมูลราคาน้ำมัน...`;
 
             try {
                 const response = await fetch(apiUrl);
-
-                if (!response.ok) throw new Error("ไม่สามารถติดต่อเซิร์ฟเวอร์ข้อมูลได้");
-
+                if (!response.ok) throw new Error("Network error");
                 const data = await response.json();
+                
+                // ดึงราคาจาก ปตท. (PTT) เป็นเกณฑ์
+                const price95 = data.stations.ptt.prices["Gasohol 95"];
 
-                // API ตัวนี้จะให้ข้อมูลแยกตามแบรนด์ เราจะดึงของ PTT (ปตท.) เป็นหลัก
-                // หาจากรายการที่มีชื่อว่า Gasohol 95 หรือรหัสที่เกี่ยวข้อง
-                const pttPrices = data.stations.ptt.prices;
-                const gasohol95 = pttPrices["Gasohol 95"] || pttPrices["โซฮอล์ 95"];
-
-                if (gasohol95) {
-                    document.getElementById('fuelPrice').value = gasohol95;
-                    statusEl.innerHTML = `<i class="fas fa-check-circle" style="color:#4caf50"></i> ซิงค์ราคาวันนี้สำเร็จ (ปตท.)`;
+                if (price95) {
+                    document.getElementById('fuelPrice').value = price95;
+                    statusEl.innerHTML = `<i class="fas fa-check-circle" style="color:#4caf50"></i> ซิงค์สำเร็จ (ปตท. โซฮอล์ 95)`;
                     calculate();
-                    console.log("✅ Sync Success: ", gasohol95);
                 } else {
-                    throw new Error("หาข้อมูล Gasohol 95 ไม่เจอ");
+                    throw new Error("Price not found");
                 }
-
             } catch (error) {
-                console.error("Diagnostic:", error.message);
-                // ถ้าดึงไม่ได้จริงๆ ให้กรอกราคามาตรฐานที่ใกล้เคียงที่สุด
+                console.log("Sync failed, using manual mode");
                 document.getElementById('fuelPrice').value = 38.45;
-                statusEl.innerHTML = `<i class="fas fa-info-circle"></i> ใช้ราคาประมาณการ (กรุณาตรวจสอบหน้าปั๊ม)`;
-            }
-        }
-
-        // ฟังก์ชันสำรอง (Secondary API)
-        async function trySecondaryApi() {
-            const statusEl = document.getElementById('syncStatus');
-            statusEl.innerHTML = `<i class="fas fa-life-ring"></i> กำลังลองดึงจากแหล่งสำรอง...`;
-
-            try {
-                // ดึงจากแหล่งอื่นที่เสถียร (เช่น JSONPlaceholder หรือ API อื่นที่รองรับ CORS)
-                const res = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent("https://thai-oil-api.vercel.app/today"));
-                const raw = await res.json();
-                const data = JSON.parse(raw.contents);
-                const price = data.prices?.find(p => p.name.includes("95"))?.price;
-
-                if (price) {
-                    document.getElementById('fuelPrice').value = price;
-                    statusEl.innerHTML = `<i class="fas fa-check-circle" style="color:#4caf50"></i> แหล่งสำรองทำงานสำเร็จ!`;
-                    calculate();
-                } else {
-                    throw new Error("แหล่งสำรองก็ไม่มีข้อมูล");
-                }
-            } catch (e) {
-                alert("❌ แหล่งสำรองก็ติดปัญหาครับ CEO ส่วนใหญ่เกิดจาก Browser บล็อกการรันไฟล์จากเครื่อง (file://) แนะนำให้ลองเปิดด้วย Microsoft Edge หรือคลิกขวาแล้วเปิดในหน้าต่างลับ (Incognito)");
-                document.getElementById('fuelPrice').value = 38.50;
-                statusEl.innerHTML = `<i class="fas fa-keyboard"></i> กรุณากรอกราคาเองชั่วคราวครับ`;
+                statusEl.innerHTML = `<i class="fas fa-info-circle"></i> ใช้ราคาประมาณการ (ตรวจสอบหน้าปั๊ม)`;
             }
         }
 
@@ -415,14 +175,9 @@
         function calculate() {
             const dist = parseFloat(document.getElementById('distance').value) || 0;
             const price = parseFloat(document.getElementById('fuelPrice').value) || 0;
-            let kmPerLiter = 0;
-
-            const type = document.getElementById('carType').value;
-            if (type === 'custom') {
-                kmPerLiter = parseFloat(document.getElementById('customConsum').value) || 0;
-            } else {
-                kmPerLiter = parseFloat(type);
-            }
+            let kmPerLiter = (document.getElementById('carType').value === 'custom') 
+                             ? parseFloat(document.getElementById('customConsum').value) || 0 
+                             : parseFloat(document.getElementById('carType').value);
 
             if (dist > 0 && price > 0 && kmPerLiter > 0) {
                 const litersUsed = dist / kmPerLiter;
@@ -439,10 +194,7 @@
             }
         }
 
-        // เริ่มการทำงาน
         initApp();
     </script>
-
 </body>
-
 </html>
