@@ -18,8 +18,6 @@
         label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #b71c1c; }
         input, select { width: 100%; padding: 12px; border: 1px solid #d32f2f; border-radius: 4px; box-sizing: border-box; font-family: 'Sarabun'; font-size: 15px; }
         .api-status { font-size: 11px; color: #d32f2f; margin-top: 5px; display: flex; align-items: center; gap: 5px; }
-        .loading-dot { animation: blink 1s infinite; }
-        @keyframes blink { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
         .result-section { padding: 25px; background: #fff; }
         .summary-card { background: #263238; color: #fff; padding: 25px; border-radius: 8px; text-align: center; margin-bottom: 20px; position: relative; }
         .summary-card::after { content: "ESTIMATED TOTAL"; position: absolute; top: 8px; left: 10px; font-size: 9px; opacity: 0.4; }
@@ -44,14 +42,14 @@
         <div class="bill-header">
             <div>
                 <h2 id="headerMonth">ประมาณการค่าน้ำมัน</h2>
-                <small id="currentDate">LOADING DATA...</small>
+                <small id="currentDate">ข้อมูล ณ วันที่ ...</small>
             </div>
             <div class="bill-logo"><i class="fas fa-gas-pump"></i></div>
         </div>
 
         <div class="input-section">
             <div class="full-row">
-                <label>เลือกรุ่นรถ (เฉลี่ย กม./ลิตร)</label>
+                <label>เลือกรุ่นรถ (อัตราสิ้นเปลืองเฉลี่ย กม./ลิตร)</label>
                 <select id="carType" onchange="updateConsumption()">
                     <optgroup label="-- รถจักรยานยนต์ --">
                         <option value="60">Honda Wave 110i / Super Cub (60 กม./ลิตร)</option>
@@ -78,7 +76,7 @@
                     <label>ราคาน้ำมัน (บาท/ลิตร)</label>
                     <input type="number" id="fuelPrice" placeholder="0.00" oninput="calculate()">
                     <div id="syncStatus" class="api-status">
-                        <i class="fas fa-sync-alt loading-dot"></i> กำลังดึงราคาน้ำมันล่าสุด...
+                        <i class="fas fa-info-circle"></i> ใช้ราคาประมาณการ (กรุณาปรับตามจริง)
                     </div>
                 </div>
             </div>
@@ -106,7 +104,7 @@
     </div>
 
     <div class="ceo-credit">
-        <img src="https://avatars.githubusercontent.com/u/166665042?v=4" alt="วินัย ผันอากาศ CEO" class="ceo-avatar">
+        <img src="winai.jpg" alt="วินัย ผันอากาศ CEO" class="ceo-avatar">
         <div class="ceo-info">
             <p class="ceo-name">วินัย ผันอากาศ</p>
             <p class="ceo-title">CEO & FOUNDER, DIY SMART ENERGY</p>
@@ -137,33 +135,9 @@
             document.getElementById('headerMonth').innerText = `คำนวณน้ำมัน เดือน${thMonths[monthIdx]} ${yearTh}`;
             document.getElementById('currentDate').innerText = `ข้อมูล ณ วันที่ ${day} ${thMonths[now.getMonth()]} ${now.getFullYear() + 543}`;
 
-            fetchFuelPrice();
-        }
-
-        async function fetchFuelPrice() {
-            const statusEl = document.getElementById('syncStatus');
-            const apiUrl = "https://raw.githubusercontent.com/jill6666/thai-oil-price/main/today.json";
-
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error("Network error");
-                const data = await response.json();
-                
-                // ดึงราคาจาก ปตท. (PTT) เป็นเกณฑ์
-                const price95 = data.stations.ptt.prices["Gasohol 95"];
-
-                if (price95) {
-                    document.getElementById('fuelPrice').value = price95;
-                    statusEl.innerHTML = `<i class="fas fa-check-circle" style="color:#4caf50"></i> ซิงค์สำเร็จ (ปตท. โซฮอล์ 95)`;
-                    calculate();
-                } else {
-                    throw new Error("Price not found");
-                }
-            } catch (error) {
-                console.log("Sync failed, using manual mode");
-                document.getElementById('fuelPrice').value = 38.45;
-                statusEl.innerHTML = `<i class="fas fa-info-circle"></i> ใช้ราคาประมาณการ (ตรวจสอบหน้าปั๊ม)`;
-            }
+            // Hard-code ราคามาตรฐาน (เสถียรที่สุดสำหรับการทำคลิป)
+            document.getElementById('fuelPrice').value = 38.45; 
+            calculate(); 
         }
 
         function updateConsumption() {
