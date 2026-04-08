@@ -342,66 +342,41 @@
             fetchFuelPrice(); // เรียก API ดึงราคาน้ำมัน
         }
 
-        // 2. ดึงราคาน้ำมัน พร้อมระบบวินิจฉัย (Diagnostic System)
+        // ระบบดึงราคาน้ำมันแบบ Direct Connect (ไม่ต้องใช้ Proxy ตัวกลาง)
         async function fetchFuelPrice() {
             const statusEl = document.getElementById('syncStatus');
 
-            // ขั้นตอนที่ 1: เช็คอินเทอร์เน็ตเบื้องต้น
-            if (!navigator.onLine) {
-                statusEl.innerHTML = `<i class="fas fa-wifi"></i> ตรวจพบ: ไม่ได้เชื่อมต่ออินเทอร์เน็ต`;
-                alert("❌ ขั้นตอนที่ 1 ไม่ผ่าน: กรุณาเปิดเน็ตก่อนซิงค์ข้อมูลครับ");
-                return;
-            }
+            // เราจะลองดึงจาก API ที่รองรับ CORS ในตัว (เป็นมิตรกับ GitHub Pages)
+            const apiUrl = "https://raw.githubusercontent.com/jill6666/thai-oil-price/main/today.json";
 
-            const targetApi = "https://api.sumit703.com/oil-price";
-            const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(targetApi);
-
-            statusEl.innerHTML = `<i class="fas fa-sync-alt loading-dot"></i> กำลังทดสอบสัญญาณ Proxy...`;
+            statusEl.innerHTML = `<i class="fas fa-sync-alt loading-dot"></i> กำลังเชื่อมต่อฐานข้อมูลราคาน้ำมัน...`;
 
             try {
-                // ขั้นตอนที่ 2: เช็คการเชื่อมต่อกับ Proxy
-                const response = await fetch(proxyUrl);
+                const response = await fetch(apiUrl);
 
-                if (!response.ok) {
-                    throw new Error("Proxy Server ไม่ตอบสนอง (HTTP " + response.status + ")");
-                }
+                if (!response.ok) throw new Error("ไม่สามารถติดต่อเซิร์ฟเวอร์ข้อมูลได้");
 
-                // ขั้นตอนที่ 3: เช็คการรับข้อมูล
-                const rawData = await response.json();
+                const data = await response.json();
 
-                if (!rawData || !rawData.contents) {
-                    throw new Error("Proxy ส่งข้อมูลว่างเปล่ากลับมา");
-                }
+                // API ตัวนี้จะให้ข้อมูลแยกตามแบรนด์ เราจะดึงของ PTT (ปตท.) เป็นหลัก
+                // หาจากรายการที่มีชื่อว่า Gasohol 95 หรือรหัสที่เกี่ยวข้อง
+                const pttPrices = data.stations.ptt.prices;
+                const gasohol95 = pttPrices["Gasohol 95"] || pttPrices["โซฮอล์ 95"];
 
-                // ขั้นตอนที่ 4: แปลงข้อมูล (Parsing)
-                const data = JSON.parse(rawData.contents);
-
-                // ขั้นตอนที่ 5: ค้นหาราคาในตัวแปร
-                const priceToday = data.today?.["Gasohol 95"];
-
-                if (priceToday) {
-                    document.getElementById('fuelPrice').value = priceToday;
-                    statusEl.innerHTML = `<i class="fas fa-check-circle" style="color:#4caf50"></i> ซิงค์สำเร็จ (ข้อมูลจาก: sumit703)`;
+                if (gasohol95) {
+                    document.getElementById('fuelPrice').value = gasohol95;
+                    statusEl.innerHTML = `<i class="fas fa-check-circle" style="color:#4caf50"></i> ซิงค์ราคาวันนี้สำเร็จ (ปตท.)`;
                     calculate();
-                    console.log("✅ การซิงค์เสร็จสมบูรณ์");
+                    console.log("✅ Sync Success: ", gasohol95);
                 } else {
-                    throw new Error("ไม่พบข้อมูล 'Gasohol 95' ในฐานข้อมูลปัจจุบัน");
+                    throw new Error("หาข้อมูล Gasohol 95 ไม่เจอ");
                 }
 
             } catch (error) {
-                // สรุปปัญหาให้ท่าน CEO ทราบ
-                console.error("Diagnostic Error:", error.message);
-                statusEl.innerHTML = `<i class="fas fa-exclamation-circle" style="color:#ff9800"></i> ติดปัญหา: ${error.message}`;
-
-                // ถามเพื่อวินิจฉัย
-                const userChoice = confirm(`🛠️ ระบบซิงค์มีปัญหาที่ขั้นตอน: \n"${error.message}"\n\nคุณต้องการให้ผมลองดึงจากแหล่งสำรอง (Backup API) ไหมครับ?`);
-
-                if (userChoice) {
-                    // ถ้า CEO บอกเอาแหล่งสำรอง ก็รัน Fallback ทันที
-                    trySecondaryApi();
-                } else {
-                    document.getElementById('fuelPrice').value = 38.50;
-                }
+                console.error("Diagnostic:", error.message);
+                // ถ้าดึงไม่ได้จริงๆ ให้กรอกราคามาตรฐานที่ใกล้เคียงที่สุด
+                document.getElementById('fuelPrice').value = 38.45;
+                statusEl.innerHTML = `<i class="fas fa-info-circle"></i> ใช้ราคาประมาณการ (กรุณาตรวจสอบหน้าปั๊ม)`;
             }
         }
 
