@@ -28,7 +28,7 @@
         .label { color: #666; }
         .val { font-weight: 600; color: #2c3e50; }
         .ceo-credit { max-width: 600px; margin: auto; background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #ddd; display: flex; align-items: center; gap: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
-        .ceo-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #c5a059; object-fit: cover; box-shadow: 0 0 10px rgba(197, 160, 89, 0.5); }
+        .ceo-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #c5a059; object-fit: cover; box-shadow: 0 0 10px rgba(197,160,89,0.5); }
         .ceo-info { flex: 1; }
         .ceo-name { font-weight: 700; color: #1a1a1a; font-size: 18px; margin: 0; }
         .ceo-title { font-size: 11px; color: #c5a059; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin: 4px 0; }
@@ -106,7 +106,7 @@
     </div>
 
     <div class="ceo-credit">
-        <img src="https://avatars.githubusercontent.com/u/166665042?v=4" alt="วินัย ผันอากาศ CEO" class="ceo-avatar">
+        <img src="https://lh3.googleusercontent.com/a/ACg8ocKG8dEEP_hVIByaEQ5xvE-lz5XFeMDf5YBtimAJRUfL9AJotEk=s288-c-no" alt="วินัย ผันอากาศ CEO" class="ceo-avatar">
         <div class="ceo-info">
             <p class="ceo-name">วินัย ผันอากาศ</p>
             <p class="ceo-title">CEO & FOUNDER, DIY SMART ENERGY</p>
@@ -142,20 +142,19 @@
 
         async function fetchFuelPrice() {
             const statusEl = document.getElementById('syncStatus');
-            // ใช้ API ผ่าน Proxy ที่เสถียรสำหรับ GitHub Pages
-            const proxy = "https://api.allorigins.win/get?url=";
-            const target = encodeURIComponent("https://thai-oil-api.vercel.app/today");
+            // API แหล่งใหม่ที่รองรับ GitHub และเสถียรกว่าเดิม
+            const apiUrl = "https://raw.githubusercontent.com/jill6666/thai-oil-price/main/today.json";
 
             try {
-                const response = await fetch(proxy + target);
-                const raw = await response.json();
-                const data = JSON.parse(raw.contents);
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error();
+                const data = await response.json();
                 
-                // ค้นหาราคา Gasohol 95 จากรายการ
-                const gas95 = data.prices.find(p => p.name.includes("95") && !p.name.includes("E85"));
-                
-                if (gas95) {
-                    document.getElementById('fuelPrice').value = gas95.price;
+                // ค้นหาราคา Gasohol 95 จากปั๊ม ปตท. (PTT)
+                const price95 = data.stations.ptt.prices["Gasohol 95"];
+
+                if (price95) {
+                    document.getElementById('fuelPrice').value = price95;
                     statusEl.innerHTML = `<i class="fas fa-check-circle" style="color:#4caf50"></i> ซิงค์ราคาวันนี้สำเร็จ!`;
                     calculate();
                 } else {
