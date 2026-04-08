@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คำนวณค่าไฟอัจฉริยะ - DIY-PEA by Winai</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #e0e0e0; padding: 20px; padding-bottom: 50px; }
+        .bill-container { max-width: 650px; margin: auto; background: white; border-radius: 4px; box-shadow: 0 0 20px rgba(0,0,0,0.2); position: relative; overflow: hidden; margin-bottom: 30px; }
+        
+        /* หัวบิล */
+        .bill-header { background: #6a1b9a; color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .bill-header h2 { margin: 0; font-size: 19px; letter-spacing: 0.5px; }
+        .bill-logo { font-weight: bold; border: 2px solid white; padding: 5px 10px; }
+
+        .input-section { padding: 20px; background: #f3e5f5; border-bottom: 2px dashed #ccc; }
+        .input-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        input { padding: 10px; border: 1px solid #6a1b9a; border-radius: 4px; flex: 1; min-width: 120px; font-family: 'Sarabun'; }
+        button.add-btn { background: #6a1b9a; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.3s; }
+        button.add-btn:hover { background: #4a148c; }
+
+        /* รายการอุปกรณ์ */
+        .item-list { padding: 15px 20px; min-height: 50px; font-size: 14px; }
+        .item { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 8px 0; }
+        .btn-del { color: #ff5252; cursor: pointer; border: none; background: none; font-size: 12px; font-weight: bold; }
+
+        /* ส่วนแสดงผลแบบบิลจริง */
+        .bill-summary { padding: 20px; background: #fff; }
+        .bill-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+        .bill-table td { padding: 8px 0; vertical-align: top; }
+        .bill-table .label { color: #555; }
+        .bill-table .amount { text-align: right; font-weight: 600; width: 120px; }
+        
+        .divider { border-top: 1px solid #000; margin: 10px 0; }
+        .double-divider { border-top: 3px double #000; margin: 10px 0; }
+        
+        .total-row { font-size: 24px; font-weight: 700; color: #000; }
+        .unit-box { background: #6a1b9a; color: white; padding: 12px; text-align: center; margin-bottom: 15px; border-radius: 4px; font-weight: bold; }
+        
+        .stamp { position: absolute; top: 150px; right: 20px; border: 4px solid #4caf50; color: #4caf50; padding: 10px; transform: rotate(-15deg); font-weight: bold; opacity: 0.1; pointer-events: none; }
+
+        /* ส่วนเครดิต CEO ปรับปรุงใหม่ */
+        .ceo-credit { max-width: 650px; margin: auto; background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #ddd; display: flex; align-items: center; gap: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .ceo-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #c5a059; object-fit: cover; box-shadow: 0 0 10px rgba(197, 160, 89, 0.5); }
+        .ceo-info { flex: 1; }
+        .ceo-name { font-weight: 700; color: #1a1a1a; font-size: 18px; margin: 0; }
+        .ceo-title { font-size: 11px; color: #c5a059; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin: 4px 0; }
+        
+        /* ปุ่มโซเชียล */
+        .social-buttons { display: flex; gap: 10px; margin-top: 12px; }
+        .social-btn { display: flex; align-items: center; gap: 8px; padding: 8px 15px; border-radius: 20px; color: white; text-decoration: none; font-size: 13px; font-weight: bold; transition: 0.3s; }
+        .btn-line { background-color: #06C755; }
+        .btn-line:hover { background-color: #05a346; transform: translateY(-2px); }
+        .btn-fb { background-color: #1877F2; }
+        .btn-fb:hover { background-color: #1565c0; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+<div class="bill-container">
+    <div class="stamp">คำนวณโดย DIY อัจฉริยะ</div>
+    
+    <div class="bill-header">
+        <div>
+            <h2 id="billTitle">คำนวณค่าไฟ...</h2>
+            <small id="billSubTitle">SIMULATED ELECTRICITY BILL by Winai</small>
+        </div>
+        <div class="bill-logo">DIY-PEA</div>
+    </div>
+
+    <div class="input-section">
+        <div class="input-group">
+            <input type="text" id="name" placeholder="ชื่อเครื่องไฟฟ้า">
+            <input type="number" id="watt" placeholder="วัตต์ (W)">
+            <input type="number" id="hours" placeholder="ชม./วัน">
+            <button class="add-btn" onclick="addItem()">เพิ่มรายการ</button>
+        </div>
+    </div>
+
+    <div id="itemList" class="item-list">
+        <p style="text-align:center; color:#999;">กรุณาเพิ่มอุปกรณ์เพื่อคำนวณ</p>
+    </div>
+
+    <div class="bill-summary" id="billSummary" style="display:none;">
+        <div class="unit-box">
+            จำนวนหน่วยไฟฟ้ารวม: <span id="totalUnitText">0</span> หน่วย/เดือน
+        </div>
+
+        <table class="bill-table">
+            <tr>
+                <td class="label">ค่าพลังงานไฟฟ้า (Step Rate)</td>
+                <td class="amount" id="baseCost">0.00</td>
+            </tr>
+            <tr>
+                <td class="label">ค่าบริการรายเดือน</td>
+                <td class="amount" id="serviceFee">0.00</td>
+            </tr>
+            <tr>
+                <td class="label">ค่า Ft (0.39 บาท/หน่วย)</td>
+                <td class="amount" id="ftCost">0.00</td>
+            </tr>
+            <tr class="divider"><td></td><td></td></tr>
+            <tr>
+                <td class="label" style="font-weight:bold;">รวมก่อนภาษี (Sub-total)</td>
+                <td class="amount" id="subTotal">0.00</td>
+            </tr>
+            <tr>
+                <td class="label">ภาษีมูลค่าเพิ่ม (VAT 7%)</td>
+                <td class="amount" id="vat">0.00</td>
+            </tr>
+            <tr class="double-divider"><td></td><td></td></tr>
+            <tr class="total-row">
+                <td class="label">ยอดที่ต้องชำระสุทธิ</td>
+                <td class="amount" style="color: #6a1b9a;" id="grandTotal">0.00</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="ceo-credit">
+    <img src="https://lh3.googleusercontent.com/a/ACg8ocKG8dEEP_hVIByaEQ5xvE-lz5XFeMDf5YBtimAJRUfL9AJotEk=s288-c-no" alt="วินัย ผันอากาศ CEO" class="ceo-avatar">
+    <div class="ceo-info">
+        <p class="ceo-name">วินัย ผันอากาศ</p>
+        <p class="ceo-title">CEO & FOUNDER, DIY SMART ENERGY</p>
+        
+        <div class="social-buttons">
+            <a href="https://line.me/ti/p/~0926533228" target="_blank" class="social-btn btn-line">
+                <i class="fab fa-line"></i> แอดไลน์
+            </a>
+            <a href="https://www.facebook.com/winayo1" target="_blank" class="social-btn btn-fb">
+                <i class="fab fa-facebook"></i> เฟสบุ๊ค
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    let items = [];
+
+    function updateDateTitle() {
+        const now = new Date();
+        const date = now.getDate();
+        let month = now.getMonth();
+        let year = now.getFullYear() + 543;
+        if (date > 15) {
+            month = month + 1;
+            if (month > 11) { month = 0; year++; }
+        }
+        const monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+        document.getElementById('billTitle').innerText = `คำนวณค่าไฟ เดือน${monthNames[month]} ${year}`;
+    }
+
+    updateDateTitle();
+
+    function addItem() {
+        const name = document.getElementById('name').value;
+        const watt = document.getElementById('watt').value;
+        const hours = document.getElementById('hours').value;
+        if (name && watt && hours) {
+            items.push({ name, watt: parseFloat(watt), hours: parseFloat(hours) });
+            document.getElementById('name').value = '';
+            document.getElementById('watt').value = '';
+            document.getElementById('hours').value = '';
+            render();
+        }
+    }
+
+    function removeItem(index) {
+        items.splice(index, 1);
+        render();
+    }
+
+    function render() {
+        const list = document.getElementById('itemList');
+        if(items.length === 0) {
+            list.innerHTML = '<p style="text-align:center; color:#999;">กรุณาเพิ่มอุปกรณ์เพื่อคำนวณ</p>';
+            document.getElementById('billSummary').style.display = 'none';
+            return;
+        }
+        list.innerHTML = items.map((item, index) => `
+            <div class="item">
+                <span>${item.name} (${item.watt}W x ${item.hours}ชม.)</span>
+                <button class="btn-del" onclick="removeItem(${index})">ลบ</button>
+            </div>
+        `).join('');
+        calculate();
+        document.getElementById('billSummary').style.display = 'block';
+    }
+
+    function calculate() {
+        let totalUnits = 0;
+        items.forEach(item => {
+            totalUnits += (item.watt * item.hours / 1000) * 30;
+        });
+
+        let baseCost = 0;
+        let tempUnits = totalUnits;
+        const rates = [
+            { limit: 150, price: 3.2484 },
+            { limit: 250, price: 4.2218 },
+            { limit: Infinity, price: 4.4217 }
+        ];
+
+        for (let r of rates) {
+            if (tempUnits > 0) {
+                let unitInTier = Math.min(tempUnits, r.limit);
+                baseCost += unitInTier * r.price;
+                tempUnits -= unitInTier;
+            }
+        }
+
+        const serviceFee = (totalUnits > 150) ? 38.22 : 8.19;
+        const ftCost = totalUnits * 0.39;
+        const subTotal = baseCost + serviceFee + ftCost;
+        const vat = subTotal * 0.07;
+        const grandTotal = subTotal + vat;
+
+        document.getElementById('totalUnitText').innerText = totalUnits.toFixed(2);
+        document.getElementById('baseCost').innerText = baseCost.toFixed(2);
+        document.getElementById('serviceFee').innerText = serviceFee.toFixed(2);
+        document.getElementById('ftCost').innerText = ftCost.toFixed(2);
+        document.getElementById('subTotal').innerText = subTotal.toFixed(2);
+        document.getElementById('vat').innerText = vat.toFixed(2);
+        document.getElementById('grandTotal').innerText = grandTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+</script>
+
+</body>
+</html>
