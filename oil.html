@@ -1,200 +1,45 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ค่าน้ำมันอัจฉริยะ - DIY by Winai</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body { font-family: 'Sarabun', sans-serif; background-color: #cfd8dc; padding: 20px; padding-bottom: 50px; }
-        .bill-container { max-width: 600px; margin: auto; background: white; border-radius: 8px; box-shadow: 0 0 25px rgba(0, 0, 0, 0.2); overflow: hidden; margin-bottom: 30px; }
-        .bill-header { background: #d32f2f; color: white; padding: 25px; display: flex; justify-content: space-between; align-items: center; }
-        .bill-header h2 { margin: 0; font-size: 20px; letter-spacing: 0.5px; }
-        .bill-logo { font-size: 30px; }
-        .input-section { padding: 20px; background: #ffebee; border-bottom: 2px dashed #bbb; }
-        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .full-row { width: 100%; margin-bottom: 15px; }
-        label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #b71c1c; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #d32f2f; border-radius: 4px; box-sizing: border-box; font-family: 'Sarabun'; font-size: 15px; }
-        .api-status { font-size: 11px; color: #d32f2f; margin-top: 5px; display: flex; align-items: center; gap: 5px; }
-        .loading-dot { animation: blink 1s infinite; }
-        @keyframes blink { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
-        .result-section { padding: 25px; background: #fff; }
-        .summary-card { background: #263238; color: #fff; padding: 25px; border-radius: 8px; text-align: center; margin-bottom: 20px; position: relative; }
-        .summary-card::after { content: "ESTIMATED TOTAL"; position: absolute; top: 8px; left: 10px; font-size: 9px; opacity: 0.4; }
-        .total-cost { font-size: 40px; font-weight: bold; color: #ffeb3b; margin: 10px 0; }
-        .detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; }
-        .label { color: #666; }
-        .val { font-weight: 600; color: #2c3e50; }
-        .ceo-credit { max-width: 600px; margin: auto; background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #ddd; display: flex; align-items: center; gap: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
-        .ceo-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #c5a059; object-fit: cover; box-shadow: 0 0 10px rgba(197,160,89,0.5); }
-        .ceo-info { flex: 1; }
-        .ceo-name { font-weight: 700; color: #1a1a1a; font-size: 18px; margin: 0; }
-        .ceo-title { font-size: 11px; color: #c5a059; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin: 4px 0; }
-        .social-buttons { display: flex; gap: 10px; margin-top: 12px; }
-        .social-btn { display: flex; align-items: center; gap: 8px; padding: 8px 15px; border-radius: 20px; color: white; text-decoration: none; font-size: 12px; font-weight: bold; transition: 0.3s; }
-        .btn-line { background-color: #06C755; }
-        .btn-fb { background-color: #1877F2; }
-    </style>
-</head>
-<body>
+// ระบบดึงราคาน้ำมันอัจฉริยะ (อัพเกรดเสถียรภาพสูงสุดสำหรับ GitHub)
+    async function fetchFuelPrice() {
+        const statusEl = document.getElementById('syncStatus');
+        // ใช้ Proxy ตัวใหม่ที่เสถียรและเร็วขึ้น เพื่อดึงข้อมูล API สาธารณะ
+        const proxyUrl = "https://api.allorigins.win/get?url=";
+        const targetUrl = encodeURIComponent("https://api.bangchak.co.th/api/oilprice");
 
-    <div class="bill-container">
-        <div class="bill-header">
-            <div>
-                <h2 id="headerMonth">ประมาณการค่าน้ำมัน</h2>
-                <small id="currentDate">LOADING...</small>
-            </div>
-            <div class="bill-logo"><i class="fas fa-gas-pump"></i></div>
-        </div>
+        statusEl.innerHTML = `<i class="fas fa-sync-alt loading-dot"></i> กำลังซิงค์ข้อมูลราคาวันนี้...`;
 
-        <div class="input-section">
-            <div class="full-row">
-                <label>เลือกรุ่นรถ (อัตราสิ้นเปลืองเฉลี่ย กม./ลิตร)</label>
-                <select id="carType" onchange="updateConsumption()">
-                    <optgroup label="-- รถจักรยานยนต์ --">
-                        <option value="60">Honda Wave 110i / Super Cub (60 กม./ลิตร)</option>
-                        <option value="50">Honda Scoopy / Click 160 (50 กม./ลิตร)</option>
-                        <option value="45">Yamaha Grand Filano (45 กม./ลิตร)</option>
-                        <option value="30">Yamaha Mio / Fino (30 กม./ลิตร)</option>
-                    </optgroup>
-                    <optgroup label="-- รถยนต์ --">
-                        <option value="23">Toyota Yaris Ativ / Eco Car (23 กม./ลิตร)</option>
-                        <option value="15">รถเก๋งทั่วไป / Civic / Altis (15 กม./ลิตร)</option>
-                        <option value="13">รถกระบะ / Fortuner / Revo (13 กม./ลิตร)</option>
-                        <option value="8">Ford Raptor (8 กม./ลิตร)</option>
-                    </optgroup>
-                    <option value="custom">-- กำหนดค่าเอง --</option>
-                </select>
-            </div>
+        try {
+            const response = await fetch(proxyUrl + targetUrl);
+            if (!response.ok) throw new Error("Connection Error");
 
-            <div class="input-row">
-                <div>
-                    <label>ระยะทาง (กม.)</label>
-                    <input type="number" id="distance" placeholder="0" oninput="calculate()">
-                </div>
-                <div>
-                    <label>ราคาน้ำมัน (บาท/ลิตร)</label>
-                    <input type="number" id="fuelPrice" placeholder="0.00" oninput="calculate()">
-                    <div id="syncStatus" class="api-status">
-                        <i class="fas fa-sync-alt loading-dot"></i> กำลังดึงราคาน้ำมันล่าสุด...
-                    </div>
-                </div>
-            </div>
+            const rawData = await response.json();
+            // ข้อมูลจาก Proxy ต้องนำมา Parse เป็น JSON อีกครั้ง
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(rawData.contents, "text/xml");
+            
+            // ค้นหาราคา Gasohol 95 (ใช้ราคากลางบางจากซึ่งใกล้เคียงกับ ปตท. ในเว็บกระปุก)
+            const items = xmlDoc.getElementsByTagName("item");
+            let price95 = 0;
 
-            <div id="customConsumptionBox" style="display:none;" class="full-row">
-                <label>ระบุอัตราสิ้นเปลืองเอง (กม./ลิตร)</label>
-                <input type="number" id="customConsum" placeholder="เช่น 18.5" oninput="calculate()">
-            </div>
-        </div>
-
-        <div class="result-section">
-            <div class="summary-card">
-                <div>ค่าน้ำมันที่ต้องจ่ายประมาณ</div>
-                <div class="total-cost" id="resTotal">0.00 ฿</div>
-            </div>
-            <div class="detail-row">
-                <span class="label">ปริมาณน้ำมันที่ใช้</span>
-                <span class="val" id="resLiters">0.00 ลิตร</span>
-            </div>
-            <div class="detail-row">
-                <span class="label">อัตราจ่ายจริงต่อกิโลเมตร</span>
-                <span class="val" id="resPerKm" style="color:#d32f2f;">0.00 บาท/กม.</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="ceo-credit">
-        <img src="https://lh3.googleusercontent.com/a/ACg8ocKG8dEEP_hVIByaEQ5xvE-lz5XFeMDf5YBtimAJRUfL9AJotEk=s288-c-no" alt="วินัย ผันอากาศ CEO" class="ceo-avatar">
-        <div class="ceo-info">
-            <p class="ceo-name">วินัย ผันอากาศ</p>
-            <p class="ceo-title">CEO & FOUNDER, DIY SMART ENERGY</p>
-            <div class="social-buttons">
-                <a href="https://line.me/ti/p/~0926533228" target="_blank" class="social-btn btn-line">
-                    <i class="fab fa-line"></i> แอดไลน์
-                </a>
-                <a href="https://www.facebook.com/winayo1" target="_blank" class="social-btn btn-fb">
-                    <i class="fab fa-facebook"></i> เฟสบุ๊ค
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function initApp() {
-            const now = new Date();
-            const thMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-            const day = now.getDate();
-            let monthIdx = now.getMonth();
-            let yearTh = now.getFullYear() + 543;
-
-            if (day > 15) {
-                monthIdx++;
-                if (monthIdx > 11) { monthIdx = 0; yearTh++; }
-            }
-
-            document.getElementById('headerMonth').innerText = `คำนวณน้ำมัน เดือน${thMonths[monthIdx]} ${yearTh}`;
-            document.getElementById('currentDate').innerText = `ข้อมูล ณ วันที่ ${day} ${thMonths[now.getMonth()]} ${now.getFullYear() + 543}`;
-
-            fetchFuelPrice();
-        }
-
-        async function fetchFuelPrice() {
-            const statusEl = document.getElementById('syncStatus');
-            // API แหล่งใหม่ที่รองรับ GitHub และเสถียรกว่าเดิม
-            const apiUrl = "https://raw.githubusercontent.com/jill6666/thai-oil-price/main/today.json";
-
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error();
-                const data = await response.json();
-                
-                // ค้นหาราคา Gasohol 95 จากปั๊ม ปตท. (PTT)
-                const price95 = data.stations.ptt.prices["Gasohol 95"];
-
-                if (price95) {
-                    document.getElementById('fuelPrice').value = price95;
-                    statusEl.innerHTML = `<i class="fas fa-check-circle" style="color:#4caf50"></i> ซิงค์ราคาวันนี้สำเร็จ!`;
-                    calculate();
-                } else {
-                    throw new Error();
+            for (let i = 0; i < items.length; i++) {
+                const type = items[i].getElementsByTagName("type")[0].textContent;
+                if (type.includes("Gasohol 95")) {
+                    price95 = items[i].getElementsByTagName("today")[0].textContent;
+                    break;
                 }
-            } catch (e) {
-                document.getElementById('fuelPrice').value = 38.45;
-                statusEl.innerHTML = `<i class="fas fa-info-circle"></i> ใช้ราคาประมาณการ (ตรวจสอบหน้าปั๊ม)`;
             }
-        }
 
-        function updateConsumption() {
-            const type = document.getElementById('carType').value;
-            document.getElementById('customConsumptionBox').style.display = (type === 'custom') ? 'block' : 'none';
-            calculate();
-        }
-
-        function calculate() {
-            const dist = parseFloat(document.getElementById('distance').value) || 0;
-            const price = parseFloat(document.getElementById('fuelPrice').value) || 0;
-            let kmPerLiter = (document.getElementById('carType').value === 'custom') 
-                             ? parseFloat(document.getElementById('customConsum').value) || 0 
-                             : parseFloat(document.getElementById('carType').value);
-
-            if (dist > 0 && price > 0 && kmPerLiter > 0) {
-                const litersUsed = dist / kmPerLiter;
-                const totalCost = litersUsed * price;
-                const costPerKm = totalCost / dist;
-
-                document.getElementById('resTotal').innerText = totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " ฿";
-                document.getElementById('resLiters').innerText = litersUsed.toFixed(2) + " ลิตร";
-                document.getElementById('resPerKm').innerText = costPerKm.toFixed(2) + " บาท/กม.";
+            if (price95) {
+                document.getElementById('fuelPrice').value = price95;
+                statusEl.innerHTML = `<i class="fas fa-check-circle" style="color:#4caf50"></i> ซิงค์สำเร็จ! (ราคาปัจจุบัน ${price95} ฿)`;
+                calculate();
             } else {
-                document.getElementById('resTotal').innerText = "0.00 ฿";
-                document.getElementById('resLiters').innerText = "0.00 ลิตร";
-                document.getElementById('resPerKm').innerText = "0.00 บาท/กม.";
+                throw new Error("Data missing");
             }
-        }
 
-        initApp();
-    </script>
-</body>
-</html>
+        } catch (error) {
+            console.error("Diagnostic:", error.message);
+            // ถ้าดึงไม่ได้จริงๆ จะใช้ราคาล่าสุดจากภาพที่ท่านส่งมา (43.95) เพื่อความแม่นยำตอนถ่ายคลิปครับ
+            document.getElementById('fuelPrice').value = 43.95; 
+            statusEl.innerHTML = `<i class="fas fa-info-circle"></i> ใช้ราคาล่าสุด (ตรวจสอบหน้าปั๊มอีกครั้ง)`;
+        }
+    }
