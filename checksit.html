@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เช็กให้ชัวร์! ยืนยันสิทธิสวัสดิการแห่งรัฐ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap');
+        body { font-family: 'Sarabun', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen p-4 md:p-8">
+
+    <main class="max-w-xl mx-auto">
+        <header class="mb-8 text-center">
+            <h1 class="text-2xl font-bold text-red-700 mb-2">เช็กให้ชัวร์! ยืนยันสิทธิ</h1>
+            <p id="progress-text" class="text-sm text-slate-500">กรุณายืนยันข้อมูลหมวดหมู่ที่ 1 จาก 5</p>
+        </header>
+
+        <!-- Container for steps -->
+        <div id="step-container" class="space-y-6"></div>
+
+        <footer class="mt-12 text-center text-slate-400 text-xs">
+            <p>* เครื่องมือช่วยตรวจสอบเงื่อนไขเบื้องต้นเท่านั้น</p>
+        </footer>
+    </main>
+
+    <script>
+        const criteriaData = [
+            { cat: "1. สถานะและอาชีพ", items: [
+                "ยืนยันว่าฉันไม่ได้เป็น: พระ, เณร, แม่ชี หรือนักบวช",
+                "ยืนยันว่าฉันไม่ได้: ติดคุกอยู่ หรืออยู่ในสถานพินิจ/สถานกักกัน",
+                "ยืนยันว่าฉันไม่ได้: อาศัยอยู่ในสถานสงเคราะห์ของรัฐ",
+                "ยืนยันว่าฉันไม่ได้: เป็นนักเรียน/นักศึกษา (รวม กศน., มหาวิทยาลัยสงฆ์, Thai MOOC)",
+                "ยืนยันว่าฉันไม่ได้: เป็นข้าราชการ, พนักงานรัฐ (ยกเว้นรายได้ไม่เกิน 1 แสน/ปี)",
+                "ยืนยันว่าฉันไม่ได้: รับบำเหน็จรายเดือน, บำนาญปกติ หรือเบี้ยหวัด",
+                "ยืนยันว่าฉันไม่ได้เป็น: นักการเมือง (ส.ส., ส.ว., ท้องถิ่น)"
+            ]},
+            { cat: "2. รายได้และหนี้สิน", items: [
+                "ยืนยันว่าฉันไม่มี: รายได้เกิน 100,000 บาทต่อปี (เฉลี่ยเกิน 8,300/เดือน)",
+                "ยืนยันว่าฉันไม่มี: รายจ่ายโอนเงินให้ผู้อื่นเกิน 100,000 บาทต่อปี",
+                "ยืนยันว่าฉันไม่มี: เงินฝาก + สลาก รวมกันทุกธนาคารเกิน 100,000 บาท",
+                "ยืนยันว่าฉันไม่มี: มีวงเงินสินเชื่อรวมเกิน 100,000 บาท (กู้บ้าน/รถ)",
+                "ยืนยันว่าฉันไม่มี: มีบัตรเครดิต (แม้ไม่ได้ใช้งาน)"
+            ]},
+            { cat: "3. ธุรกิจและการลงทุน", items: [
+                "ยืนยันว่าฉันไม่ได้: เปิดบริษัท, เป็นหุ้นส่วน, หรือเป็นกรรมการบริษัท",
+                "ยืนยันว่าฉันไม่ได้: เล่นหุ้น หรือซื้อกองทุน",
+                "ยืนยันว่าฉันไม่ได้: ซื้อพันธบัตรรัฐบาล",
+                "ยืนยันว่าฉันไม่ได้: มีชื่อเป็นผู้เอาประกันชีวิต ที่จ่ายเบี้ยรายปีเกิน 12,000 บาท <br><small class='text-red-600 font-semibold'>(สำคัญ: ตรวจสอบกรมธรรม์ของคุณให้ดีก่อนติ๊ก! แม้ลูกจะเป็นคนจ่ายเบี้ยให้ก็ตาม)</small>"
+            ]},
+            { cat: "4. ครอบครัวและภาษี", items: [
+                "ยืนยันว่าไม่มีการ: ที่ลูกหลานนำชื่อเราไปยื่นลดหย่อนภาษีเลี้ยงดูพ่อแม่",
+                "ยืนยันว่าฉันไม่มี: คู่สมรสที่นำชื่อไปยื่นลดหย่อนภาษี",
+                "ยืนยันว่าฉันไม่มี: การนำชื่อบุตรไปยื่นลดหย่อนภาษี"
+            ]},
+            { cat: "5. บ้าน ที่ดิน และรถยนต์", items: [
+                "ยืนยันว่าฉันไม่มี: มีคอนโดห้องใหญ่เกิน 35 ตร.ม.",
+                "ยืนยันว่าฉันไม่มี: มีบ้านเดี่ยว/ทาวน์เฮาส์/ตึกแถว พื้นที่เกิน 25 ตร.วา",
+                "ยืนยันว่าฉันไม่มี: ที่ดินเกิน 1 ไร่ (หรือเกิน 10 ไร่ กรณีเป็นเกษตรกร)",
+                "ยืนยันว่าฉันไม่มี: มีรถเก๋ง หรือรถกระบะ เป็นชื่อของตัวเอง"
+            ]}
+        ];
+
+        let currentStep = 0;
+        const container = document.getElementById('step-container');
+        const progressText = document.getElementById('progress-text');
+
+        function renderStep() {
+            container.innerHTML = '';
+            progressText.innerText = `หมวดหมู่ที่ ${currentStep + 1} จาก ${criteriaData.length}`;
+            
+            const section = criteriaData[currentStep];
+            const div = document.createElement('div');
+            div.className = "bg-white p-6 rounded-2xl shadow-sm border border-slate-100 animate-in fade-in zoom-in duration-300";
+            div.innerHTML = `<h2 class="text-xl font-bold text-slate-800 mb-6 border-b pb-4">${section.cat}</h2>
+                             <div class="space-y-4"></div>`;
+            
+            const listDiv = div.querySelector('div');
+            section.items.forEach((item, i) => {
+                const id = `item-${currentStep}-${i}`;
+                listDiv.innerHTML += `
+                    <label class="flex items-start gap-3 cursor-pointer p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition">
+                        <input type="checkbox" onchange="checkCompletion()" class="mt-1 w-5 h-5 accent-green-600 cursor-pointer">
+                        <span class="text-slate-700 leading-relaxed">${item}</span>
+                    </label>
+                `;
+            });
+
+            const btn = document.createElement('button');
+            btn.id = "next-btn";
+            btn.className = "w-full mt-6 py-3 rounded-xl bg-slate-300 text-white font-bold cursor-not-allowed transition-all";
+            btn.disabled = true;
+            btn.innerText = currentStep === criteriaData.length - 1 ? "ตรวจสอบผลลัพธ์" : "ถัดไป";
+            btn.onclick = nextStep;
+            div.appendChild(btn);
+            
+            container.appendChild(div);
+        }
+
+        function checkCompletion() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            const btn = document.getElementById('next-btn');
+            
+            if (allChecked) {
+                btn.disabled = false;
+                btn.className = "w-full mt-6 py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold transition-all shadow-lg shadow-green-200";
+            } else {
+                btn.disabled = true;
+                btn.className = "w-full mt-6 py-3 rounded-xl bg-slate-300 text-white font-bold cursor-not-allowed transition-all";
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < criteriaData.length - 1) {
+                currentStep++;
+                renderStep();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            container.innerHTML = `
+                <div class="bg-green-50 p-8 rounded-2xl border-2 border-green-200 text-center animate-in fade-in zoom-in">
+                    <div class="text-6xl mb-4">✅</div>
+                    <h2 class="text-2xl font-bold text-green-800 mb-2">ผ่านเกณฑ์เบื้องต้น</h2>
+                    <p class="text-green-700 mb-6">คุณได้ยืนยันครบทุกข้อแล้ว อย่างไรก็ตามระบบของรัฐจะตรวจสอบจากฐานข้อมูลจริงอีกครั้ง</p>
+                    <button onclick="location.reload()" class="text-slate-500 underline text-sm">เริ่มตรวจสอบใหม่</button>
+                </div>
+            `;
+            progressText.innerText = "ตรวจสอบเสร็จสิ้น";
+        }
+
+        renderStep();
+    </script>
+</body>
+</html>
